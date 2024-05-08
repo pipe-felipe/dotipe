@@ -1,0 +1,30 @@
+_trial_temp
+# Python artifacts
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.tar.gz
+
+# Poetry artifacts
+/poetry.lock
+/.venv/
+
+# IDEs and text editors
+/.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.orig
+*.py,cover
+.vscode/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
