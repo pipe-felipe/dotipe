@@ -28,3 +28,5 @@ build/
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+test/mock_home_folder/Downloads/test_file
