@@ -1,6 +1,7 @@
+import os.path
 from os.path import abspath
 
-from dotipe.files_comparator import compare_files, compare_files_on_folder
+from dotipe.files_comparator import compare_files, get_all_files_from_directory
 
 
 def test_compare_files_should_compare_two_files():
@@ -46,3 +47,36 @@ def test_compare_files_should_return_the_diff_message_when_files_are_different()
 #     # Act
 #     result = compare_files_on_folder(folder1, folder2)
 #     assert result == "Folder is empty"
+
+
+def test_get_all_files_from_directory_should_return_all_files_from_a_directory():
+    folder = f"{abspath("mock_home_folder")}/multiple"
+    # Act
+    result = get_all_files_from_directory(folder)
+    assert result == [
+        f"{abspath("mock_home_folder")}/multiple/file_on_multiple_root",
+        f"{abspath("mock_home_folder")}/multiple/ignore/ignored.json",
+        f"{abspath("mock_home_folder")}/multiple/js/main.js",
+        f"{abspath("mock_home_folder")}/multiple/src/main.txt",
+        f"{abspath("mock_home_folder")}/multiple/tests/going_to_test.txt",
+    ]
+
+
+def test_get_all_files_from_directory_should_return_empty_array_if_folder_dit_not_exists():
+    folder = f"{abspath("mock_home_folder")}/multiples"
+    # Act
+    result = get_all_files_from_directory(folder)
+    assert result == []
+
+
+def test_get_all_files_should_skip_selected_folder():
+    folder = f"{abspath("mock_home_folder")}/multiple"
+    folder_to_ignore = "ignore"
+    # Act
+    result = get_all_files_from_directory(folder, folder_to_ignore)
+    assert result == [
+        f"{abspath("mock_home_folder")}/multiple/file_on_multiple_root",
+        f"{abspath("mock_home_folder")}/multiple/js/main.js",
+        f"{abspath("mock_home_folder")}/multiple/src/main.txt",
+        f"{abspath("mock_home_folder")}/multiple/tests/going_to_test.txt",
+    ]

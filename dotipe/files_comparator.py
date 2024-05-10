@@ -19,9 +19,10 @@ def compare_files(local_file: str, remote_raw: str) -> (str, bool):
         return f"File not found {local_file} or {remote_raw}", False
 
 
-def get_all_files(directory: str) -> list[str]:
+def get_all_files_from_directory(directory: str, to_ignore=None) -> list[str]:
     all_files = []
     for root, _, files in os.walk(directory):
         for file in files:
-            all_files.append(os.path.join(root, file))
-    return all_files
+            if not isinstance(to_ignore, str) or to_ignore not in file:
+                all_files.append(os.path.join(root, file))
+    return sorted(all_files)
