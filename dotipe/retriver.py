@@ -2,7 +2,7 @@ from os.path import expanduser
 
 import requests
 
-from dotipe.dotipe_config import DotipeConfig
+from dotipe.config_handler import DotipeConfig
 
 
 def get_git_raw_remote_file_data(url, file_name):

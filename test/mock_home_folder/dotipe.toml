@@ -6,3 +6,4 @@ os = "Linux"
 raw_url = "https://example.com"
 file_name = "test_file"
 file_path = "/Downloads/"
+single_file = true
