@@ -62,7 +62,7 @@ def test_get_all_files_from_directory_should_return_empty_array_if_folder_dit_no
 
 def test_get_all_files_should_skip_selected_folder():
     folder = f"{abspath("mock_home_folder")}/multiple"
-    folder_to_ignore = ["ignore"]
+    folder_to_ignore = "ignore"
     # Act
     result = get_all_files_from_directory(folder, folder_to_ignore)
     assert result == [
@@ -75,7 +75,7 @@ def test_get_all_files_should_skip_selected_folder():
 
 def test_compare_files_from_folder_should_compare_two_folders():
     local_directory = f"{abspath("mock_home_folder")}/example_project"
-    raw_remote_directory = f"{abspath("mock_home_folder")}/example_project_raw"
+    raw_remote_directory = f"{abspath("mock_home_folder")}/tmp/example_project"
     # Act
     result = compare_files_from_folder(local_directory, raw_remote_directory)
     print(result[0])

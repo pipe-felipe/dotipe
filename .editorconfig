@@ -1,0 +1,10 @@
+# Generate a editor config file
+
+[.py]
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# The max row length is 88 characters
+max_line_length = 88
