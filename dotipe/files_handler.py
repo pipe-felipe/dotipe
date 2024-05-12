@@ -1,6 +1,6 @@
 import difflib
 from os import walk
-from os.path import exists
+from os.path import exists, join, relpath
 
 from dotipe.core import IGNORABLE_DIRS
 
@@ -20,19 +20,27 @@ def compare_files(local_file: str, remote_raw: str) -> list[str]:
         raise FileNotFoundError("File not found")
 
 
-def get_all_files_from_directory(directory: str, to_ignore=None) -> list[str]:
+def get_all_files_from_directory(directory: str, project_name: str, to_ignore=None):
     """
     Get all files from a directory, if to_ignore is a string, it will ignore all files that contain the string
     to_ignore is the folder that should be ignored
     """
     all_files = []
-    for _, _, files in walk(directory):
+    for root_folder, folder, files in walk(directory):
         for file in files:
             if not isinstance(to_ignore, list) or not any(
                 ignore in file for ignore in to_ignore
             ):
-                all_files.append(file)
-    return sorted(all_files)
+                complete_path = join(root_folder, file)
+                files_metadata = {
+                    "complete_path": complete_path,
+                    "file_name": file,
+                    "relative_project_name_path": relpath(
+                        complete_path, start=project_name
+                    ),
+                }
+                all_files.append(files_metadata)
+    return all_files
 
 
 def __get_the_folder_items_difference(
@@ -50,7 +58,20 @@ def compare_files_from_folder(local_directory: str, remote_directory: str):
     """
     Compare all files from two directories
     """
-    local_files = get_all_files_from_directory(local_directory, IGNORABLE_DIRS)
-    remote_files = get_all_files_from_directory(remote_directory, IGNORABLE_DIRS)
-    x = __get_the_folder_items_difference(local_files, remote_files)
-    print(x)
+    local_files = get_all_files_from_directory(
+        local_directory, "example_project", IGNORABLE_DIRS
+    )
+    remote_files = get_all_files_from_directory(
+        remote_directory, "example_project_raw", IGNORABLE_DIRS
+    )
+
+    diffs = {}
+
+    for local_file in local_files:
+        for remote_file in remote_files:
+            if (
+                remote_file["relative_project_name_path"]
+                == local_file["relative_project_name_path"]
+            ):
+                print(remote_file["relative_project_name_path"])
+    return diffs
