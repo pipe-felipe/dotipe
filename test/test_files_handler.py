@@ -6,6 +6,7 @@ from dotipe.files_handler import (
     compare_files,
     get_all_files_from_directory,
     compare_files_from_folder,
+    format_diff_between_files_string,
 )
 
 
@@ -38,6 +39,46 @@ def test_compare_files_should_return_the_diff_message_when_files_are_different()
         "@@\n\n-other\n+one"
     )
     assert result == expected_diff
+
+
+def test_should_format_diff_between_files_string():
+    diff_output = "@@ -1,5 +1,16 @@"
+    # Act
+    result = format_diff_between_files_string(diff_output)
+    assert result["local_subtitle"] == "-1"
+    assert result["raw_subtitle"] == "+1"
+    assert result["local_diff"] == 5
+    assert result["raw_diff"] == 16
+
+
+def test_should_format_diff_between_files_if_local_did_not_have_any_diff():
+    diff_output = "@@ -1 +1,16 @@"
+    # Act
+    result = format_diff_between_files_string(diff_output)
+    assert result["local_subtitle"] == "-1"
+    assert result["raw_subtitle"] == "+1"
+    assert result["local_diff"] == 0
+    assert result["raw_diff"] == 16
+
+
+def test_should_format_diff_between_files_if_raw_did_not_have_any_diff():
+    diff_output = "@@ -1,1 +1 @@"
+    # Act
+    result = format_diff_between_files_string(diff_output)
+    assert result["local_subtitle"] == "-1"
+    assert result["raw_subtitle"] == "+1"
+    assert result["local_diff"] == 1
+    assert result["raw_diff"] == 0
+
+
+def test_should_format_diff_between_files_if_both_not_have_any_diff():
+    diff_output = "@@ -1 +1 @@"
+    # Act
+    result = format_diff_between_files_string(diff_output)
+    assert result["local_subtitle"] == "-1"
+    assert result["raw_subtitle"] == "+1"
+    assert result["local_diff"] == 0
+    assert result["raw_diff"] == 0
 
 
 def test_get_all_files_from_directory_should_return_all_files_from_a_directory():
