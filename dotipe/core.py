@@ -1,17 +1,9 @@
 import platform
-from os import environ
-from tempfile import gettempdir
 
-TOML_TEXT_BASE = (
-    "[user]\n"
-    'info = "Do not edit this [user] session"\n'
-    f'os = "{platform.system()}"\n'
-)
+TOML_TEXT_BASE = "[user]\n" 'info = "Do not edit this [user] session"\n' f'os = "{platform.system()}"\n'
 
 IGNORABLE_DIRS = (
     ".git",
-    ".github",
-    ".gitignore",
     ".gitattributes",
     ".gitmodules",
     ".gitkeep",
@@ -29,7 +21,3 @@ class Keys:
     URL_KEY = "raw_url"
     FILE_PATH_KEY = "file_path"
     FILE_NAME_KEY = "file_name"
-
-
-class OperatingSystemConstants:
-    TEMP_FOLDER = gettempdir()

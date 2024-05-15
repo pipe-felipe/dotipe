@@ -36,9 +36,7 @@ def get_all_files_from_directory(directory: str, project_name: str, to_ignore=No
     all_files = []
     for root_folder, folder, files in walk(directory):
         for file in files:
-            if not isinstance(to_ignore, list) or not any(
-                ignore in file for ignore in to_ignore
-            ):
+            if not isinstance(to_ignore, list) or not any(ignore in file for ignore in to_ignore):
                 complete_path = join(root_folder, file)
                 files_metadata = {
                     "complete_path": complete_path,
@@ -49,18 +47,7 @@ def get_all_files_from_directory(directory: str, project_name: str, to_ignore=No
     return all_files
 
 
-def __get_the_folder_items_difference(
-    folder_items_local: list[str], folder_items_raw: list[str]
-):
-    local_set = set(folder_items_local)
-    remote_set = set(folder_items_raw)
-    return (
-        set.difference(local_set, remote_set),
-        set.difference(remote_set, local_set),
-    )
-
-
-def format_diff_between_files_string(diff_string):
+def get_diff_between_files_metadata(diff_string):
     """ "
     This function formats the diff string to a more readable format
     output string example: (local:-1 raw:+1 diff_amount: 14)
@@ -86,40 +73,39 @@ def compare_files_from_folder(local_directory: str, remote_directory: str):
     """
     Compare all files from two directories
     """
-    local_files = get_all_files_from_directory(
-        local_directory, "example_project", IGNORABLE_DIRS
-    )
-    remote_files = get_all_files_from_directory(
-        remote_directory, "example_project", IGNORABLE_DIRS
-    )
+    local_files = get_all_files_from_directory(local_directory, "example_project", IGNORABLE_DIRS)
+    remote_files = get_all_files_from_directory(remote_directory, "example_project", IGNORABLE_DIRS)
 
     diffs = {}
 
     for local_file in local_files:
         for remote_file in remote_files:
-            if (
-                remote_file["relative_project_name_path"]
-                == local_file["relative_project_name_path"]
-            ):
-                print(
-                    f"Comparing {local_file['complete_path']} with {remote_file['complete_path']}"
-                )
-                print(
-                    f"Files: {local_file['file_name']} and {remote_file['file_name']}"
-                )
-                diff = compare_files(
-                    local_file["complete_path"], remote_file["complete_path"]
-                )
-                if len(diff) > 0:
-                    for i in range(len(diff)):
+            if remote_file["relative_project_name_path"] == local_file["relative_project_name_path"]:
+                print(f"Comparing {local_file['complete_path']} with {remote_file['complete_path']}")
+                print(f"Files: {local_file['file_name']} and {remote_file['file_name']}")
+
+                diff_array = compare_files(local_file["complete_path"], remote_file["complete_path"])
+                range_diff = len(diff_array)
+
+                if range_diff > 0:
+                    for _ in range(range_diff):
+                        diff_metadata = get_diff_between_files_metadata(diff_array[2])
+                        diff_in_local = []
+                        diff_in_remote = []
+
+                        for index in range(3, range_diff):
+                            line = diff_array[index]
+                            if line.startswith("-"):
+                                diff_in_local.append(line)
+                            elif line.startswith("+"):
+                                diff_in_remote.append(line)
+
                         result = {
-                            "file_local_content": diff[3],
-                            "file_remote_content": diff[4],
-                            "diff_numbers": format_diff_between_files_string(diff[2]),
+                            "file_local_content": diff_in_local,
+                            "file_remote_content": diff_in_remote,
+                            "diff_numbers": diff_metadata,
                             "compared_file": local_file["relative_project_name_path"],
                         }
-                        diffs[local_file["relative_project_name_path"]] = result
-                else:
-                    print("The file is equal")
 
+                        diffs[local_file["relative_project_name_path"]] = result
     return diffs
