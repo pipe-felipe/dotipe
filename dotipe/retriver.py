@@ -2,10 +2,13 @@ from os.path import expanduser
 
 import requests
 
-from dotipe.dotipe_config import DotipeConfig
+from dotipe.config_handler import DotipeConfig
 
 
-def get_git_remote(url, file_name):
+def get_git_raw_remote_file_data(url, file_name):
+    """ "
+    Download a file from a remote git repository raw url
+    """
     try:
         response = requests.get(url, stream=True)
         if response.status_code == 200:
@@ -40,7 +43,7 @@ class Retriever:
                 f"{self.home_user_folder}{user_data[self.section][self.file_path_key]}"
                 f"{user_data[self.section][self.file_name_key]}"
             )
-            get_git_remote(url, file)
+            get_git_raw_remote_file_data(url, file)
         except KeyError:
             print(f"Error: key not found in {self.dotipe_config.config_file_path}")
             raise

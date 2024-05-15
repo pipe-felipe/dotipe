@@ -1,6 +1,6 @@
 from tomllib import load
 from os.path import exists
-from dotipe.utils import TOML_TEXT_BASE
+from dotipe.core import TOML_TEXT_BASE
 
 CONFIG_FILE_NAME = "dotipe.toml"
 

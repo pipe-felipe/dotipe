@@ -2,9 +2,9 @@ from os.path import abspath
 
 import pytest
 from dotipe.retriver import Retriever
-from test.test_utils import DOTIPE_CONFIG_MOCK
-from dotipe.utils import Keys
-from dotipe.retriver import get_git_remote
+from test.mocks import DOTIPE_CONFIG_MOCK
+from dotipe.core import Keys
+from dotipe.retriver import get_git_raw_remote_file_data
 from unittest import mock
 from os import remove
 
@@ -23,7 +23,7 @@ def test_should_return_key_error_if_it_does_not_have_the_key_in_the_file():
 
 def test_git_remote_should_rise_error_when_url_not_found():
     with pytest.raises(Exception):
-        get_git_remote("url_test", "")
+        get_git_raw_remote_file_data("url_test", "")
 
 
 def test_get_from_remote_should_download_file_correctly():
