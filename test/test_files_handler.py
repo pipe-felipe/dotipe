@@ -2,12 +2,14 @@ from os.path import abspath
 
 import pytest
 
-from dotipe.core import IGNORABLE_DIRS
-from dotipe.files_handler import (
+from dotipe.core.consts import IGNORABLE_DIRS
+
+
+from dotipe.core.files_handler import (
     compare_files,
+    get_diff_between_files_metadata,
     get_all_files_from_directory,
     compare_files_from_folder,
-    get_diff_between_files_metadata,
 )
 
 
@@ -35,8 +37,8 @@ def test_compare_files_should_return_the_diff_message_when_files_are_different()
     # Act
     result = compare_files(file1, file2)
     expected_diff = [
-        "--- " "/home/pipe-ubuntu/Projects/dotipe/test/mock_home_folder/files_different/file1.txt\n",
-        "+++ " "/home/pipe-ubuntu/Projects/dotipe/test/mock_home_folder/files_different/file2.txt\n",
+        "--- " f"{abspath("mock_home_folder")}/files_different/file1.txt\n",
+        "+++ " f"{abspath("mock_home_folder")}/files_different/file2.txt\n",
         "@@ -1 +1 @@\n",
         "-other",
         "+one",

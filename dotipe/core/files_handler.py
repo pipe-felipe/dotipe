@@ -3,7 +3,7 @@ from os import walk
 from os.path import exists, join
 from re import search
 
-from dotipe.core import IGNORABLE_DIRS
+from dotipe.core.consts import IGNORABLE_DIRS
 
 
 def compare_files(local_file: str, remote_raw: str) -> list[str]:

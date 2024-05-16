@@ -1,10 +1,12 @@
 from os.path import abspath
 
 import pytest
-from dotipe.retriver import Retriever
+
+from dotipe.core.consts import Keys
+from dotipe.core.retriver import Retriever, get_git_raw_remote_file_data
 from test.mocks import DOTIPE_CONFIG_MOCK
-from dotipe.core import Keys
-from dotipe.retriver import get_git_raw_remote_file_data
+
+
 from unittest import mock
 from os import remove
 

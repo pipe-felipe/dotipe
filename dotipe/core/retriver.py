@@ -2,7 +2,7 @@ from os.path import expanduser
 
 import requests
 
-from dotipe.config_handler import DotipeConfig
+from dotipe.core.config_handler import DotipeConfigHandler
 
 
 def get_git_raw_remote_file_data(url, file_name):
@@ -21,7 +21,7 @@ def get_git_raw_remote_file_data(url, file_name):
 class Retriever:
     def __init__(
         self,
-        dotipe_config: DotipeConfig,
+        dotipe_config: DotipeConfigHandler,
         section: str,
         url_key: str,
         file_path_key: str,
