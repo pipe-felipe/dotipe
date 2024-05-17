@@ -16,9 +16,17 @@ def test_file_exists_should_returns_false_if_it_does_not_exists():
 
 def test_file_exists_should_returns_true_if_it_exists():
     config = DotipeConfigHandler(MOCKED_HOME_FOLDER)
+    toml_content = """
+    [user]
+    info = "Do not edit this [user] session"
+    os = "Linux"
+    """
+    with open(config.config_file, "w") as f:
+        f.write(toml_content)
     expected = True
     actual = config.file_exists()
     assert expected == actual
+    remove(config.config_file)
 
 
 def test_should_create_a_file_if_it_does_not_exists():
@@ -53,6 +61,7 @@ def test_retrieve_data_from_toml():
     expected = {"user": {"info": "Do not edit this [user] session", "os": "Linux"}}
     actual = config.retrieve_data_from_toml()
     assert actual == expected
+    remove(config.config_file)
 
     config.config_file = "dont_exist.toml"
     expected = {}
