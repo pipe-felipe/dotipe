@@ -23,31 +23,38 @@ def test_file_exists_should_returns_true_if_it_exists():
 
 def test_should_create_a_file_if_it_does_not_exists():
     config = DotipeConfigHandler(f"{MOCKED_HOME_FOLDER}/tmp")
-    assert not exists(config.config_file)
+    expected = False
+    actual = exists(config.config_file)
+    assert expected == actual
 
     config.create_file_if_not_exists()
-    assert exists(config.config_file)
+    expected = True
+    actual = exists(config.config_file)
+    assert expected == actual
 
     with open(config.config_file, "r") as f:
-        content = f.read()
-        assert content == TOML_TEXT_BASE
+        expected = TOML_TEXT_BASE
+        actual = f.read()
+        assert actual == expected
 
     remove(config.config_file)
 
 
 def test_retrieve_data_from_toml():
     config = DotipeConfigHandler(MOCKED_HOME_FOLDER)
-    test_data = """
+    toml_content = """
     [user]
     info = "Do not edit this [user] session"
     os = "Linux"
     """
     with open(config.config_file, "w") as f:
-        f.write(test_data)
+        f.write(toml_content)
 
-    result = config.retrieve_data_from_toml()
-    assert result == {"user": {"info": "Do not edit this [user] session", "os": "Linux"}}
+    expected = {"user": {"info": "Do not edit this [user] session", "os": "Linux"}}
+    actual = config.retrieve_data_from_toml()
+    assert actual == expected
 
     config.config_file = "dont_exist.toml"
-    result = config.retrieve_data_from_toml()
-    assert result == {}
+    expected = {}
+    actual = config.retrieve_data_from_toml()
+    assert actual == expected
