@@ -29,4 +29,4 @@ build/
 .DS_Store
 Thumbs.db
 
-test/mock_home_folder/Downloads/test_file
+tests/tests_core/mock_home_folder/Downloads/test_file

@@ -1,9 +1,0 @@
-[user]
-info = "Do not edit this [user] session"
-os = "Linux"
-
-[wsl]
-raw_url = "https://example.com"
-file_name = "test_file"
-file_path = "/Downloads/"
-single_file = true

@@ -1,7 +1,7 @@
 from typer import run
 
-from dotipe.facade.dotipe_facade import Dotipe
+from dotipe.cli.dotipe_cli import DotipeCli
 
 if __name__ == "__main__":
-    dotipe = Dotipe()
-    run(dotipe.start)
+    cli = DotipeCli()
+    run(cli.start)
