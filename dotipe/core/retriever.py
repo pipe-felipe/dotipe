@@ -1,5 +1,5 @@
 from os.path import expanduser
-from typing import BinaryIO, Tuple, Dict, Any
+from typing import Tuple
 
 import requests
 
@@ -35,11 +35,11 @@ def write_to_file(file_name: str, content: bytes) -> None:
 
 class Retriever:
     def __init__(
-        self,
-        dotipe_config: DotipeConfigHandler,
-        url_key: str,
-        file_path_key: str,
-        file_name_key: str,
+            self,
+            dotipe_config: DotipeConfigHandler,
+            url_key: str,
+            file_path_key: str,
+            file_name_key: str,
     ) -> None:
         """
         Initializes the Retriever with the provided configuration and keys.

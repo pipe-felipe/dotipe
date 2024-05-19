@@ -1,9 +1,11 @@
-from unittest.mock import patch
+from os import remove
 
 import pytest
+
 import requests
 
 from dotipe.core.config_handler import DotipeConfigHandler
+from dotipe.core.consts import Keys
 from dotipe.core.retriever import make_request, Retriever
 from tests.tests_core.mocks import MOCKED_HOME_FOLDER
 
@@ -31,3 +33,20 @@ def test_make_request_timout(requests_mock):
     requests_mock.get(url, exc=requests.exceptions.ConnectTimeout)
     with pytest.raises(requests.RequestException):
         make_request(url)
+
+
+def test__get_url_and_file():
+    config = DotipeConfigHandler(MOCKED_HOME_FOLDER)
+    config.create_file_if_not_exists()
+    retriever = Retriever(
+        config,
+        Keys.URL_KEY,
+        Keys.FILE_PATH_KEY,
+        Keys.FILE_NAME_KEY
+    )
+    expected_url = "https://test.com"
+    expected_file = "test.html"
+    actual_url, actual_file = retriever._get_url_and_file()
+    assert actual_url == expected_url
+    assert actual_file == expected_file
+    remove(config.config_file)
