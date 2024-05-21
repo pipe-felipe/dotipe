@@ -1,7 +1,6 @@
 from os import remove
 
 import pytest
-
 import requests
 
 from dotipe.core.config_handler import DotipeConfigHandler
@@ -36,16 +35,26 @@ def test_make_request_timout(requests_mock):
 
 
 def test__get_url_and_file():
-    config = DotipeConfigHandler(MOCKED_HOME_FOLDER)
-    config.create_file_if_not_exists()
-    retriever = Retriever(
-        config,
-        Keys.URL_KEY,
-        Keys.FILE_PATH_KEY,
-        Keys.FILE_NAME_KEY
-    )
+    config = DotipeConfigHandler(f"{MOCKED_HOME_FOLDER}/tmp")
+
+    toml_content = """
+    [user]
+    info = "Do not edit this [user] session"
+    os = "Linux"
+    
+    [wsl]
+    raw_url = "https://test.com"
+    file_path = "something/else"
+    file_name = "test.html"
+    """
+    with open(config.config_file, "w") as f:
+        f.write(toml_content)
+
+    retriever = Retriever(config, Keys.URL_KEY, Keys.FILE_PATH_KEY, Keys.FILE_NAME_KEY, Keys.SESSIONS[0])
+
     expected_url = "https://test.com"
-    expected_file = "test.html"
+    expected_file = "something/else/test.html"
+
     actual_url, actual_file = retriever._get_url_and_file()
     assert actual_url == expected_url
     assert actual_file == expected_file

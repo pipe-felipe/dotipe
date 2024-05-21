@@ -35,11 +35,12 @@ def write_to_file(file_name: str, content: bytes) -> None:
 
 class Retriever:
     def __init__(
-            self,
-            dotipe_config: DotipeConfigHandler,
-            url_key: str,
-            file_path_key: str,
-            file_name_key: str,
+        self,
+        dotipe_config: DotipeConfigHandler,
+        url_key: str,
+        file_path_key: str,
+        file_name_key: str,
+        section: str,
     ) -> None:
         """
         Initializes the Retriever with the provided configuration and keys.
@@ -51,7 +52,7 @@ class Retriever:
         """
         self.dotipe_config = dotipe_config
         self.home_user_folder = expanduser("~")
-        self.section = self.dotipe_config.retrieve_data_from_toml()
+        self.section = section
         self.url_key = url_key
         self.file_path_key = file_path_key
         self.file_name_key = file_name_key
@@ -61,10 +62,16 @@ class Retriever:
         :return: A tuple containing the URL and file path.
         """
         try:
-            url = self.section[self.url_key]
-            file_path = (
-                f"{self.home_user_folder}{self.section[self.file_path_key]}" f"{self.section[self.file_name_key]}"
-            )
+            toml_data = self.dotipe_config.retrieve_data_from_toml()
+            if self.section not in toml_data:
+                print(f"Error: section {self.section} not found in {self.dotipe_config.config_file_path}")
+                raise KeyError
+
+            retrieved_section = toml_data[self.section]
+            url = retrieved_section[self.url_key]
+
+            file_path = f"{retrieved_section[self.file_path_key]}/" f"{retrieved_section[self.file_name_key]}"
+
             return url, file_path
         except KeyError as e:
             print(f"Error: key {str(e)} not found in {self.dotipe_config.config_file_path}")

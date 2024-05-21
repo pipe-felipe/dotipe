@@ -31,3 +31,4 @@ Thumbs.db
 
 tests/tests_core/mock_home_folder/Downloads/test_file
 dist
+.pytest_cache
