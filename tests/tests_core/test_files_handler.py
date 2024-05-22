@@ -1,141 +1,95 @@
-# from os.path import abspath
-#
-# import pytest
-#
-# from dotipe.core.consts import IGNORABLE_DIRS
-#
-#
-# from dotipe.core.files_handler import (
-#     compare_files,
-#     get_diff_between_files_metadata,
-#     get_all_files_from_directory,
-#     compare_files_from_folder,
-# )
-#
-#
-# def test_compare_files_should_compare_two_files():
-#     file1 = f"{abspath("mock_home_folder")}/files_identical/file_test_1.txt"
-#     file2 = f"{abspath("mock_home_folder")}/files_identical/file_test_2.txt"
-#     # Act
-#     result = compare_files(file1, file2)
-#     for i in result:
-#         print(i)
-#     assert result == []
-#
-#
-# def test_compare_files_should_return_error_message_when_files_did_not_exist():
-#     file1 = "file1.txt"
-#     file2 = "file2.txt"
-#     # Act
-#     with pytest.raises(FileNotFoundError):
-#         compare_files(file1, file2)
-#
-#
-# def test_compare_files_should_return_the_diff_message_when_files_are_different():
-#     file1 = f"{abspath("mock_home_folder")}/files_different/file1.txt"
-#     file2 = f"{abspath("mock_home_folder")}/files_different/file2.txt"
-#     # Act
-#     result = compare_files(file1, file2)
-#     expected_diff = [
-#         "--- " f"{abspath("mock_home_folder")}/files_different/file1.txt\n",
-#         "+++ " f"{abspath("mock_home_folder")}/files_different/file2.txt\n",
-#         "@@ -1 +1 @@\n",
-#         "-other",
-#         "+one",
-#     ]
-#     assert result == expected_diff
-#
-#
-# def test_should_format_diff_between_files_string():
-#     diff_output = "@@ -1,5 +1,16 @@"
-#     # Act
-#     result = get_diff_between_files_metadata(diff_output)
-#     assert result["local_subtitle"] == "-1"
-#     assert result["raw_subtitle"] == "+1"
-#     assert result["local_diff"] == 5
-#     assert result["raw_diff"] == 16
-#
-#
-# def test_should_format_diff_between_files_if_local_did_not_have_any_diff():
-#     diff_output = "@@ -1 +1,16 @@"
-#     # Act
-#     result = get_diff_between_files_metadata(diff_output)
-#     assert result["local_subtitle"] == "-1"
-#     assert result["raw_subtitle"] == "+1"
-#     assert result["local_diff"] == 0
-#     assert result["raw_diff"] == 16
-#
-#
-# def test_should_format_diff_between_files_if_raw_did_not_have_any_diff():
-#     diff_output = "@@ -1,1 +1 @@"
-#     # Act
-#     result = get_diff_between_files_metadata(diff_output)
-#     assert result["local_subtitle"] == "-1"
-#     assert result["raw_subtitle"] == "+1"
-#     assert result["local_diff"] == 1
-#     assert result["raw_diff"] == 0
-#
-#
-# def test_should_format_diff_between_files_if_both_not_have_any_diff():
-#     diff_output = "@@ -1 +1 @@"
-#     # Act
-#     result = get_diff_between_files_metadata(diff_output)
-#     assert result["local_subtitle"] == "-1"
-#     assert result["raw_subtitle"] == "+1"
-#     assert result["local_diff"] == 0
-#     assert result["raw_diff"] == 0
-#
-#
-# def test_get_all_files_from_directory_should_return_all_files_from_a_directory():
-#     folder = f"{abspath("mock_home_folder")}/multiple"
-#     # Act
-#     result = get_all_files_from_directory(folder, "multiple", IGNORABLE_DIRS)
-#     assert result == [
-#         {
-#             "complete_path": f"{folder}/file_on_multiple_root",
-#             "file_name": "file_on_multiple_root",
-#             "relative_project_name_path": "multiple/file_on_multiple_root",
-#         },
-#         {
-#             "complete_path": f"{folder}/js/main.js",
-#             "file_name": "main.js",
-#             "relative_project_name_path": "multiple/js/main.js",
-#         },
-#         {
-#             "complete_path": f"{folder}/src/main.txt",
-#             "file_name": "main.txt",
-#             "relative_project_name_path": "multiple/src/main.txt",
-#         },
-#         {
-#             "complete_path": f"{folder}/ignore/ignored.json",
-#             "file_name": "ignored.json",
-#             "relative_project_name_path": "multiple/ignore/ignored.json",
-#         },
-#         {
-#             "complete_path": f"{folder}/tests/going_to_test.txt",
-#             "file_name": "going_to_test.txt",
-#             "relative_project_name_path": "multiple/tests/going_to_test.txt",
-#         },
-#     ]
-#
-#
-# def test_get_all_files_from_directory_should_return_empty_array_if_folder_dit_not_exists():
-#     folder = f"{abspath("mock_home_folder")}/multiples"
-#     # Act
-#     result = get_all_files_from_directory(folder, "multiples")
-#     assert result == []
-#
-#
-# def test_compare_files_from_folder_should_compare_two_folders():
-#     local_directory = f"{abspath("mock_home_folder")}/example_project"
-#     raw_remote_directory = f"{abspath("mock_home_folder")}/tmp/example_project"
-#     # Act
-#     result = compare_files_from_folder(local_directory, raw_remote_directory)
-#     assert result == {
-#         "example_project/src/x": {
-#             "compared_file": "example_project/src/x",
-#             "diff_numbers": {"local_diff": 2, "local_subtitle": "-1", "raw_diff": 0, "raw_subtitle": "+1"},
-#             "file_local_content": ["-felipe"],
-#             "file_remote_content": [],
-#         }
-#     }
+import pytest
+
+from dotipe.core.files_handler import (
+    compare_files,
+    get_all_files_from_directory,
+    extract_diff_metadata,
+    compare_files_from_folder,
+)
+from tests.tests_core.mocks import MOCKED_HOME_FOLDER
+
+
+def test_compare_files_should_return_empty_if_there_is_no_diff():
+    home = MOCKED_HOME_FOLDER
+    file_one = f"{home}/project_to_compare_one/identical"
+    file_two = f"{home}/project_to_compare_two/identical"
+
+    actual_diff_list = compare_files(file_one, file_two)
+    expected_diff_list = []
+    assert actual_diff_list == expected_diff_list
+
+
+def test_compare_files_should_return_diff_if_there_is_diff():
+    home = MOCKED_HOME_FOLDER
+    file_one = f"{home}/project_to_compare_one/with_diff"
+    file_two = f"{home}/project_to_compare_two/with_diff"
+
+    actual_diff_list = compare_files(file_one, file_two)
+    expected_diff_list = [
+        "--- " f"{home}/project_to_compare_one/with_diff\n",
+        "+++ " f"{home}/project_to_compare_two/with_diff\n",
+        "@@ -1,3 +1,3 @@\n",
+        " some\n",
+        " data\n",
+        "-two",
+        "+with diff",
+    ]
+    assert actual_diff_list == expected_diff_list
+
+
+def test_compare_files_should_rise_a_error_if_the_file_doest_exists():
+    home = MOCKED_HOME_FOLDER
+    file_one = f"{home}/project_to_compare_one/empty"
+    file_two = f"{home}/project_to_compare_two/do_not_exits"
+
+    with pytest.raises(FileNotFoundError):
+        compare_files(file_one, file_two)
+
+
+def test_get_all_files_from_directory():
+    home = MOCKED_HOME_FOLDER
+    project_dir = f"{home}/project_to_compare_one"
+    project_name = "project_to_compare_one"
+
+    expected = [
+        {
+            "complete_file_path": f"{home}/project_to_compare_one/with_diff",
+            "file_name": "with_diff",
+            "relative_path": "project_to_compare_one/with_diff",
+        }
+    ]
+
+    actual_files_list = get_all_files_from_directory(project_dir, project_name, to_ignore=["identical"])
+    assert actual_files_list == expected
+
+
+def test_extract_diff_metadata():
+    with pytest.raises(TypeError):
+        extract_diff_metadata("x")
+
+    string_tester = "@@ -1,3 +1,3 @@\n"
+
+    expected = {"local_diff_amount": 3, "local_subtitle": "-1", "raw_diff_amount": 3, "raw_subtitle": "+1"}
+    actual_metadata = extract_diff_metadata(string_tester)
+    assert actual_metadata == expected
+
+
+def test_compare_files_from_folder():
+    project_one = f"{MOCKED_HOME_FOLDER}/complete_test_project"
+    project_two = f"{MOCKED_HOME_FOLDER}/tmp/complete_test_project"
+
+    actual_diffs = compare_files_from_folder(project_two, project_one, "complete_test_project")
+    expected = {
+        "complete_test_project/src/my_module/module.py": {
+            "compared_file": "complete_test_project/src/my_module/module.py",
+            "diff_numbers": {
+                "local_diff_amount": 0,
+                "local_subtitle": "-1",
+                "raw_diff_amount": 2,
+                "raw_subtitle": "+1",
+            },
+            "file_local_content_changed": [],
+            "file_remote_content_changed": ['+print("I ' "just " "changed " "my " 'module")\n'],
+        }
+    }
+    assert actual_diffs == expected

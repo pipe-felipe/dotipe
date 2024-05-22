@@ -1,4 +1,5 @@
 from os import remove
+from textwrap import dedent
 
 import pytest
 import requests
@@ -47,8 +48,9 @@ def test__get_url_and_file():
     file_path = "something/else"
     file_name = "test.html"
     """
+
     with open(config.config_file, "w") as f:
-        f.write(toml_content)
+        f.write(dedent(toml_content))
 
     retriever = Retriever(config, Keys.URL_KEY, Keys.FILE_PATH_KEY, Keys.FILE_NAME_KEY, Keys.SESSIONS[0])
 
