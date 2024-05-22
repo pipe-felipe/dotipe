@@ -1,0 +1,8 @@
+[user]
+info = "Do not edit this [user] session"
+os = "Linux"
+
+[wsl]
+url_key = "some_raw_url"
+file_path = "some/file/path"
+file_name = "some_file_name"
