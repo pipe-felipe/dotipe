@@ -1,9 +1,7 @@
-from tomllib import load
 from os.path import exists
+from tomllib import load
 
-from dotipe.core.consts import TOML_TEXT_BASE
-
-CONFIG_FILE_NAME = "dotipe.toml"
+from dotipe.core.consts import TOML_TEXT_BASE, CONFIG_FILE_NAME
 
 
 class DotipeConfigHandler:
@@ -19,6 +17,9 @@ class DotipeConfigHandler:
             return configuration
         else:
             return {}
+
+    def get_sections(self):
+        return self.retrieve_data_from_toml().keys()
 
     def file_exists(self):
         return exists(self.config_file)
