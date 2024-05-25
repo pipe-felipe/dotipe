@@ -1,9 +1,11 @@
 import platform
 from os.path import expanduser
+from tempfile import gettempdir
 
 TOML_TEXT_BASE = "[user]\n" 'info = "Do not edit this [user] session"\n' f'os = "{platform.system()}"\n'
 TOML_LOCATION = expanduser("~")
 CONFIG_FILE_NAME = "dotipe.toml"
+TEMP_DIR = gettempdir()
 
 IGNORABLE_DIRS = (
     ".git",
@@ -20,7 +22,7 @@ IGNORABLE_DIRS = (
 
 
 class Keys:
-    SESSIONS = ("wsl", "nvim")
+    SESSIONS = ("user", "wsl")
     URL_KEY = "raw_url"
     FILE_PATH_KEY = "file_path"
-    FILE_NAME_KEY = "file_name"
+    NAME = "name"

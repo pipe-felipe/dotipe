@@ -46,18 +46,20 @@ def test__get_url_and_file():
     [wsl]
     raw_url = "https://test.com"
     file_path = "something/else"
-    file_name = "test.html"
+    name = "test.html"
     """
 
     with open(config.config_file, "w") as f:
         f.write(dedent(toml_content))
 
-    retriever = Retriever(config, Keys.URL_KEY, Keys.FILE_PATH_KEY, Keys.FILE_NAME_KEY, Keys.SESSIONS[0])
+    retriever = Retriever(config, Keys.URL_KEY, Keys.FILE_PATH_KEY, Keys.NAME)
 
     expected_url = "https://test.com"
     expected_file = "something/else/test.html"
+    expected_name = "test.html"
 
-    actual_url, actual_file = retriever._get_url_and_file()
+    actual_url, actual_name, actual_file = retriever.get_session_data(Keys.SESSIONS[1])
     assert actual_url == expected_url
     assert actual_file == expected_file
+    assert actual_name == expected_name
     remove(config.config_file)

@@ -4,6 +4,7 @@ from rich.console import Console
 from rich.table import Table
 
 from dotipe.core.config_handler import DotipeConfigHandler
+from dotipe.core.consts import Keys
 
 
 class DotipeFacade:
@@ -14,14 +15,14 @@ class DotipeFacade:
 
     def start_message(self):
         if not self.dotipe_config.file_exists():
-            self.console.print("\nThe configuration file did not exists :cry:\n", style="bold red")
+            self.console.print("\nThe configuration file did not exists :cry:\n", style="bold white on red")
             self.console.print("I will create a new one for you 😌\n", style="bold green")
             self.dotipe_config.create_file_if_not_exists()
         else:
-            self.console.print("\nThe file Exists and is on:", style="bold green")
+            self.console.print("\nThe file Exists and is on:", style="bold black on white")
             self.console.print(f"Path: {self.dotipe_config.config_file} 😌 \n", style="bold green")
 
-            for key in self.dotipe_config.get_sections():
+            for key in Keys.SESSIONS:
                 self.table.add_row(key)
 
             self.console.print(self.table)
@@ -36,5 +37,5 @@ class DotipeFacade:
             )
             self.console.print(config_example, style="bold magenta")
             self.console.print(
-                "You can use the --help flag to see the available commands :smile:\n", style="bold yellow"
+                "You can use the --help flag to see the available commands :smile:\n", style="bold black on white"
             )

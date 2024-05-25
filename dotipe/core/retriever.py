@@ -1,4 +1,3 @@
-from os.path import expanduser
 from typing import Tuple
 
 import requests
@@ -39,8 +38,7 @@ class Retriever:
         dotipe_config: DotipeConfigHandler,
         url_key: str,
         file_path_key: str,
-        file_name_key: str,
-        section: str,
+        name: str,
     ) -> None:
         """
         Initializes the Retriever with the provided configuration and keys.
@@ -48,41 +46,39 @@ class Retriever:
         :param dotipe_config: The configuration handler.
         :param url_key: The key for the URL in the configuration.
         :param file_path_key: The key for the file path in the configuration.
-        :param file_name_key: The key for the file name in the configuration.
+        :param name: The key for the file name in the configuration.
         """
         self.dotipe_config = dotipe_config
-        self.home_user_folder = expanduser("~")
-        self.section = section
         self.url_key = url_key
         self.file_path_key = file_path_key
-        self.file_name_key = file_name_key
+        self.name = name
 
-    def _get_url_and_file(self) -> Tuple[str, str]:
+    def get_session_data(self, session) -> Tuple[str, str, str]:
         """
         :return: A tuple containing the URL and file path.
         """
         try:
             toml_data = self.dotipe_config.retrieve_data_from_toml()
-            if self.section not in toml_data:
-                print(f"Error: section {self.section} not found in {self.dotipe_config.config_file_path}")
+            if session not in toml_data:
+                print(f"Error: section {session} not found in {self.dotipe_config.config_file_path}")
                 raise KeyError
 
-            retrieved_section = toml_data[self.section]
+            retrieved_section = toml_data[session]
             url = retrieved_section[self.url_key]
+            name = retrieved_section[self.name]
+            file_path_name = f"{retrieved_section[self.file_path_key]}/" f"{retrieved_section[self.name]}"
 
-            file_path = f"{retrieved_section[self.file_path_key]}/" f"{retrieved_section[self.file_name_key]}"
-
-            return url, file_path
+            return url, name, file_path_name
         except KeyError as e:
             print(f"Error: key {str(e)} not found in {self.dotipe_config.config_file_path}")
             raise
 
-    def retrieve_data(self) -> None:
-        url, file_path = self._get_url_and_file()
+    def retrieve_data(self, session, path_to_download) -> None:
+        url, name, _ = self.get_session_data(session)
         try:
             status_code, content = make_request(url)
             if status_code == 200:
-                write_to_file(file_path, content)
+                write_to_file(f"{path_to_download}/{name}", content)
             else:
                 print(f"Error: status code {status_code} received from {url}")
         except Exception as e:

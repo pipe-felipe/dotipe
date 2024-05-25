@@ -53,7 +53,7 @@ def extract_diff_metadata(diff_string):
     This function formats the diff string to a more readable format
     output string example: (local:-1 raw:+1 diff_amount: 14)
     """
-    pattern = r"^@@\s+-1(,\d+)?\s+\+1(,\d+)?\s+@@$"
+    pattern = r"^@@\s+-[\d]+(,\d+)?\s+\+[\d]+(,\d+)?\s+@@$"
 
     match = search(rf"{pattern}", diff_string)
     if match:
@@ -68,6 +68,30 @@ def extract_diff_metadata(diff_string):
         }
     else:
         raise "No match found"
+
+
+def extract_compared_files_metadata(diff_array, file_path_name):
+    range_diff = len(diff_array)
+    for _ in range(range_diff):
+        diff_metadata = extract_diff_metadata(diff_array[2])
+        diff_in_local = []
+        diff_in_remote = []
+
+        for index in range(3, range_diff):
+            line = diff_array[index]
+            if line.startswith("-"):
+                diff_in_local.append(line)
+            elif line.startswith("+"):
+                diff_in_remote.append(line)
+
+        result = {
+            "file_local_content_changed": diff_in_local,
+            "file_remote_content_changed": diff_in_remote,
+            "diff_numbers": diff_metadata,
+            "compared_file": file_path_name,
+        }
+
+        return result
 
 
 def compare_files_from_folder(local_directory: str, remote_directory: str, project_name: str):
@@ -89,24 +113,6 @@ def compare_files_from_folder(local_directory: str, remote_directory: str, proje
                 range_diff = len(diff_array)
 
                 if range_diff > 0:
-                    for _ in range(range_diff):
-                        diff_metadata = extract_diff_metadata(diff_array[2])
-                        diff_in_local = []
-                        diff_in_remote = []
-
-                        for index in range(3, range_diff):
-                            line = diff_array[index]
-                            if line.startswith("-"):
-                                diff_in_local.append(line)
-                            elif line.startswith("+"):
-                                diff_in_remote.append(line)
-
-                        result = {
-                            "file_local_content_changed": diff_in_local,
-                            "file_remote_content_changed": diff_in_remote,
-                            "diff_numbers": diff_metadata,
-                            "compared_file": local_file["relative_path"],
-                        }
-
-                        diffs[local_file["relative_path"]] = result
+                    result = extract_compared_files_metadata(diff_array, local_file["relative_path"])
+                    diffs[local_file["relative_path"]] = result
     return diffs

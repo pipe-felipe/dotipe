@@ -34,3 +34,11 @@ the attributes is the metadata of the dotfile
 The `raw_url` is the raw url of the dotfile
 The `file_name` is the name of the file
 The `file_path` is the path where the file or folder should be
+
+---
+TODO
+
+[ ] Search fot `TODO` in the code
+[ ] Make a good display in the differences files, make a table to add each difference in a row
+[ ] Add a test for the CLI as a whole
+[ ] Add a test for the function `extract_compared_files_metadata`
